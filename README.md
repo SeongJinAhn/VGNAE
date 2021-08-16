@@ -4,7 +4,7 @@ An implement of CIKM 2021 paper "Variational Graph Normalized Auto-Encoders" (CI
 > Seong Jin Ahn, Myoung Ho Kim.  
 > CIKM, Short Papers, 2021.  
 
-Thank you for your interest in our works!
+Thank you for your interest in our works!  
 Paper is to be uploaded.
 
 # Dependencies
