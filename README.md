@@ -2,7 +2,8 @@
 An implement of CIKM 2021 paper "Variational Graph Normalized Auto-Encoders" (CIKM 2021).
 > Variational Graph Normalized Auto-Encoders.  
 > Seong Jin Ahn, Myoung Ho Kim.  
-> CIKM, Short Papers, 2021.  
+> CIKM '21: The 30th ACM International Conference on Information and Knowledge Management Proceedings.  
+> Short paper  
 
 Thank you for your interest in our works!  
 Paper is to be uploaded.
