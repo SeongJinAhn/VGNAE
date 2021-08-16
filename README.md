@@ -9,7 +9,7 @@ Thank you for your interest in our works!
 Paper is to be uploaded.
 
 We find out that GAEs make embeddings of isolated nodes (nodes with no-observed links) zero vectors regardless of their feature information.  
-Our works try to generate proper embeddings of isolated nodes (nodes with no-observed links).
+Our works try to distinguish embeddings of isolated nodes by reflecting their feature information better.
 ![image](https://user-images.githubusercontent.com/37531907/129611067-0c4cb724-0bea-4b4b-a5b0-7afc56f87643.png)  
 ![image](https://user-images.githubusercontent.com/37531907/129611133-1dad1073-fcd2-4df8-a3df-1cca2cd2e090.png)
 
