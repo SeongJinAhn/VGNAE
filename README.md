@@ -1,22 +1,23 @@
 # VGNAE
-This repository provides a reference implementation of VGNAE as described in the paper:
-
+An implement of CIKM 2021 paper "Variational Graph Normalized Auto-Encoders" (CIKM 2021).
 > Variational Graph Normalized Auto-Encoders.  
 > Seong Jin Ahn, Myoung Ho Kim.  
 > CIKM, Short Papers, 2021.  
 
-To be uploaded.
+Thank you for your interest in our works!
+Paper is to be uploaded.
 
 # Dependencies
 Recent versions of the following packages for Python 3 are required:
 
+* Anaconda3
 * Python 3.8.0  
 * Pytorch 1.8.1  
 * torch_geometric 1.7.0  
 * torch_scatter 2.0.6  
 
-# Usage
+# Easy Run
 > python main.py --dataset=Cora --training_rate=0.2 --epochs=300
->
+
 # Citing
-If you find VGNAE useful in your research or want to compare it, please cite the paper
+If you make advantage of our VGNAE in your research, please cite the following in your manuscript:
