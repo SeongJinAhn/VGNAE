@@ -16,6 +16,7 @@ Recent versions of the following packages for Python 3 are required:
 * torch_scatter 2.0.6  
 
 # Usage
-
+> python main.py --dataset=Cora --training_rate=0.2 --epochs=300
+>
 # Citing
 If you find VGNAE useful in your research or want to compare it, please cite the paper
