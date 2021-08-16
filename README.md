@@ -8,6 +8,8 @@ An implement of CIKM 2021 paper "Variational Graph Normalized Auto-Encoders" (CI
 Thank you for your interest in our works!  
 Paper is to be uploaded.
 
+![image](https://user-images.githubusercontent.com/37531907/129611067-0c4cb724-0bea-4b4b-a5b0-7afc56f87643.png)
+
 # Dependencies
 Recent versions of the following packages for Python 3 are required:
 
