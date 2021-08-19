@@ -6,7 +6,7 @@ An implement of CIKM 2021 paper "Variational Graph Normalized Auto-Encoders" (CI
 > Short paper  
 
 Thank you for your interest in our works!  
-Paper is to be uploaded.
+You can access our paper in https://arxiv.org/abs/2108.08046
 
 We find out that GAEs make embeddings of isolated nodes (nodes with no-observed links) zero vectors regardless of their feature information.  
 Our works try to distinguish embeddings of isolated nodes by reflecting their feature information better.
