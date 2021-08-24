@@ -30,11 +30,9 @@ Recent versions of the following packages for Python 3 are required:
 If you make advantage of our VGNAE in your research, please cite the following in your manuscript:
 
 
->@misc{ahn2021variational,  
->      title={Variational Graph Normalized Auto-Encoders},  
->      author={Seong Jin Ahn and Myoung Ho Kim},  
->      year={2021},  
->      eprint={2108.08046},  
->      archivePrefix={arXiv},  
->      primaryClass={cs.LG}  
->}  
+>@article{ahn2021variational,
+>>  title={Variational Graph Normalized Auto-Encoders},
+>>  author={Ahn, Seong Jin and Kim, Myoung Ho},
+>>  journal={arXiv preprint arXiv:2108.08046},
+>>  year={2021}
+>}
