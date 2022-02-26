@@ -10,8 +10,6 @@ from torch_geometric.utils import train_test_split_edges
 from torch_geometric.nn import GAE, APPNP
 import torch_geometric.transforms as T
 
-from gae.layers2 import Propagation
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, default='GAE')
 parser.add_argument('--dataset', type=str, default='Cora')
