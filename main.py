@@ -11,10 +11,11 @@ from torch_geometric.nn import GAE, APPNP
 import torch_geometric.transforms as T
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', type=str, default='GAE')
+parser.add_argument('--model', type=str, default='GNAE')
 parser.add_argument('--dataset', type=str, default='Cora')
 parser.add_argument('--epochs', type=int, default=300)
 parser.add_argument('--scaling_factor', type=float, default=1.8)
+parser.add_argument('--training_rate', type=float, default=0.2) 
 args = parser.parse_args()
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', args.dataset)
@@ -37,28 +38,29 @@ class Encoder(torch.nn.Module):
         self.propagate = APPNP(K=1, alpha=0)
 
     def forward(self, x, edge_index,not_prop=0):
-        if args.model == 'GAE':
+        if args.model == 'GNAE':
             x = self.linear1(x)
             x = F.normalize(x,p=2,dim=1)  * args.scaling_factor
             x = self.propagate(x, edge_index)
             return x
 
-        if args.model == 'VGAE':
+        if args.model == 'VGNAE':
             x_ = self.linear1(x)
             x_ = self.propagate(x_, edge_index)
 
             x = self.linear2(x)
-            x = F.normalize(x,p=2,dim=1)*1.8
+            x = F.normalize(x,p=2,dim=1) * args.scaling_factor
             x = self.propagate(x, edge_index)
             return x, x_
 
-        norm = torch.norm(x,p=2,dim=1)
-        self.asd = norm
         return x
 
 
 channels = 128
-data = train_test_split_edges(data.to('cuda'), val_ratio=0.05, test_ratio=0.1)
+train_rate = args.training_rate
+val_ratio = (1-args.training_rate) / 3
+test_ratio = (1-args.training_rate) / 3 * 2
+data = train_test_split_edges(data.to('cuda'), val_ratio=val_ratio, test_ratio=test_ratio)
 
 N = int(data.x.size()[0])
 dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -73,7 +75,7 @@ def train():
     optimizer.zero_grad()
     z  = model.encode(x, train_pos_edge_index)
     loss = model.recon_loss(z, train_pos_edge_index)
-    if args.model in ['VGAE']:
+    if args.model in ['VGNAE']:
         loss = loss + (1 / data.num_nodes) * model.kl_loss()
     loss.backward()
     optimizer.step()
