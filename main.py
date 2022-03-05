@@ -7,15 +7,16 @@ import torch.nn.functional as F
 
 from torch_geometric.datasets import Planetoid, Coauthor, Amazon
 from torch_geometric.utils import train_test_split_edges
-from torch_geometric.nn import GAE, APPNP
+from torch_geometric.nn import GAE, VGAE, APPNP
 import torch_geometric.transforms as T
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', type=str, default='GNAE')
+parser.add_argument('--model', type=str, default='VGNAE')
 parser.add_argument('--dataset', type=str, default='Cora')
 parser.add_argument('--epochs', type=int, default=300)
+parser.add_argument('--channels', type=int, default=128)
 parser.add_argument('--scaling_factor', type=float, default=1.8)
-parser.add_argument('--training_rate', type=float, default=0.2) 
+parser.add_argument('--training_rate', type=float, default=0.8) 
 args = parser.parse_args()
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', args.dataset)
@@ -56,7 +57,7 @@ class Encoder(torch.nn.Module):
         return x
 
 
-channels = 128
+channels = args.channels
 train_rate = args.training_rate
 val_ratio = (1-args.training_rate) / 3
 test_ratio = (1-args.training_rate) / 3 * 2
@@ -64,7 +65,10 @@ data = train_test_split_edges(data.to('cuda'), val_ratio=val_ratio, test_ratio=t
 
 N = int(data.x.size()[0])
 dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = GAE(Encoder(data.x.size()[1], channels, data.train_pos_edge_index)).to(dev)
+if args.model == 'GNAE':   
+    model = GAE(Encoder(data.x.size()[1], channels, data.train_pos_edge_index)).to(dev)
+if args.model == 'VGNAE':
+    model = VGAE(Encoder(data.x.size()[1], channels, data.train_pos_edge_index)).to(dev)
 
 data.train_mask = data.val_mask = data.test_mask = data.y = None
 x, train_pos_edge_index = data.x.to(dev), data.train_pos_edge_index.to(dev)
@@ -75,7 +79,7 @@ def train():
     optimizer.zero_grad()
     z  = model.encode(x, train_pos_edge_index)
     loss = model.recon_loss(z, train_pos_edge_index)
-    if args.model in ['VGNAE']:
+    if args.model in ['VGAE']:
         loss = loss + (1 / data.num_nodes) * model.kl_loss()
     loss.backward()
     optimizer.step()
