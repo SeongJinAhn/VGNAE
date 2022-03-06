@@ -57,14 +57,14 @@ class Encoder(torch.nn.Module):
         return x
 
 
+dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 channels = args.channels
 train_rate = args.training_rate
 val_ratio = (1-args.training_rate) / 3
 test_ratio = (1-args.training_rate) / 3 * 2
-data = train_test_split_edges(data.to('cuda'), val_ratio=val_ratio, test_ratio=test_ratio)
+data = train_test_split_edges(data.to(dev), val_ratio=val_ratio, test_ratio=test_ratio)
 
 N = int(data.x.size()[0])
-dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 if args.model == 'GNAE':   
     model = GAE(Encoder(data.x.size()[1], channels, data.train_pos_edge_index)).to(dev)
 if args.model == 'VGNAE':
