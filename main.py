@@ -31,6 +31,7 @@ if args.dataset in ['computers', 'photo']:
 data = dataset[0]
 data = T.NormalizeFeatures()(data)
 
+
 class Encoder(torch.nn.Module):
     def __init__(self, in_channels, out_channels, edge_index):
         super(Encoder, self).__init__()
@@ -38,10 +39,10 @@ class Encoder(torch.nn.Module):
         self.linear2 = nn.Linear(in_channels, out_channels)
         self.propagate = APPNP(K=1, alpha=0)
 
-    def forward(self, x, edge_index,not_prop=0):
+    def forward(self, x, edge_index, not_prop=0):
         if args.model == 'GNAE':
             x = self.linear1(x)
-            x = F.normalize(x,p=2,dim=1)  * args.scaling_factor
+            x = F.normalize(x, p=2, dim=1) * args.scaling_factor
             x = self.propagate(x, edge_index)
             return x
 
@@ -50,7 +51,7 @@ class Encoder(torch.nn.Module):
             x_ = self.propagate(x_, edge_index)
 
             x = self.linear2(x)
-            x = F.normalize(x,p=2,dim=1) * args.scaling_factor
+            x = F.normalize(x, p=2, dim=1) * args.scaling_factor
             x = self.propagate(x, edge_index)
             return x, x_
 
@@ -73,17 +74,19 @@ if args.model == 'VGNAE':
 data.train_mask = data.val_mask = data.test_mask = data.y = None
 x, train_pos_edge_index = data.x.to(dev), data.train_pos_edge_index.to(dev)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
- 
+
+
 def train():
     model.train()
     optimizer.zero_grad()
-    z  = model.encode(x, train_pos_edge_index)
+    z = model.encode(x, train_pos_edge_index)
     loss = model.recon_loss(z, train_pos_edge_index)
-    if args.model in ['VGAE']:
+    if args.model == 'VGNAE':
         loss = loss + (1 / data.num_nodes) * model.kl_loss()
     loss.backward()
     optimizer.step()
     return loss
+
 
 def test(pos_edge_index, neg_edge_index, plot_his=0):
     model.eval()
@@ -91,7 +94,8 @@ def test(pos_edge_index, neg_edge_index, plot_his=0):
         z = model.encode(x, train_pos_edge_index)
     return model.test(z, pos_edge_index, neg_edge_index)
 
-for epoch in range(1,args.epochs):
+
+for epoch in range(1, args.epochs):
     loss = train()
     loss = float(loss)
     
