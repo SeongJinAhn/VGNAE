@@ -66,7 +66,7 @@ test_ratio = (1-args.training_rate) / 3 * 2
 data = train_test_split_edges(data.to(dev), val_ratio=val_ratio, test_ratio=test_ratio)
 
 N = int(data.x.size()[0])
-if args.model == 'GNAE':   
+if args.model == 'GNAE':
     model = GAE(Encoder(data.x.size()[1], channels, data.train_pos_edge_index)).to(dev)
 if args.model == 'VGNAE':
     model = VGAE(Encoder(data.x.size()[1], channels, data.train_pos_edge_index)).to(dev)
@@ -95,6 +95,14 @@ def test(pos_edge_index, neg_edge_index, plot_his=0):
     return model.test(z, pos_edge_index, neg_edge_index)
 
 
+def predict(pred_edge_index):
+    model.eval()
+    with torch.no_grad():
+        z = model.encode(x, train_pos_edge_index)
+        pred = model.decode(z, pred_edge_index, sigmoid=True)
+        return pred
+
+
 for epoch in range(1, args.epochs):
     loss = train()
     loss = float(loss)
@@ -103,3 +111,5 @@ for epoch in range(1, args.epochs):
         test_pos, test_neg = data.test_pos_edge_index, data.test_neg_edge_index
         auc, ap = test(data.test_pos_edge_index, data.test_neg_edge_index)
         print('Epoch: {:03d}, LOSS: {:.4f}, AUC: {:.4f}, AP: {:.4f}'.format(epoch, loss, auc, ap))
+
+torch.save(model.state_dict(), './%s_%s_epochs%d_training-rate%d.pt' % (args.model, args.dataset, args.epochs, int(args.training_rate * 100)))
