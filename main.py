@@ -10,6 +10,8 @@ from torch_geometric.utils import train_test_split_edges
 from torch_geometric.nn import GAE, VGAE, APPNP
 import torch_geometric.transforms as T
 
+from converter import read_data_from_npz
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, default='VGNAE')
 parser.add_argument('--dataset', type=str, default='Cora')
@@ -27,6 +29,8 @@ if args.dataset in ['cs', 'physics']:
     dataset = Coauthor(path, args.dataset, 'public')
 if args.dataset in ['computers', 'photo']:
     dataset = Amazon(path, args.dataset, 'public')
+if args.dataset in ['fb_1684', 'fb_1912', 'mag_cs', 'mag_eng']:
+    dataset = read_data_from_npz(path, args.dataset)
 
 data = dataset[0]
 data = T.NormalizeFeatures()(data)
@@ -103,6 +107,10 @@ def predict(pred_edge_index):
         return pred
 
 
+best_epochs = 0
+best_loss = 10
+best_auc = 0.0
+best_ap = 0.0
 for epoch in range(1, args.epochs):
     loss = train()
     loss = float(loss)
@@ -111,5 +119,11 @@ for epoch in range(1, args.epochs):
         test_pos, test_neg = data.test_pos_edge_index, data.test_neg_edge_index
         auc, ap = test(data.test_pos_edge_index, data.test_neg_edge_index)
         print('Epoch: {:03d}, LOSS: {:.4f}, AUC: {:.4f}, AP: {:.4f}'.format(epoch, loss, auc, ap))
+        if loss < best_loss:
+            best_epochs = epoch
+            best_auc = auc
+            best_ap = ap
+            best_loss = loss
 
-torch.save(model.state_dict(), './%s_%s_epochs%d_training-rate%d.pt' % (args.model, args.dataset, args.epochs, int(args.training_rate * 100)))
+print('Best: Epoch: {:03d}, LOSS: {:.4f}, AUC: {:.4f}, AP: {:.4f}'.format(best_epochs, best_loss, best_auc, best_ap))
+# torch.save(model.state_dict(), './%s_%s_epochs%d_training-rate%d.pt' % (args.model, args.dataset, args.epochs, int(args.training_rate * 100)))
